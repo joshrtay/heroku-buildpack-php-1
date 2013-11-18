@@ -1,6 +1,11 @@
 # Default configuration for non-framework apps
 root /app/<%= ENV['DOCUMENT_ROOT'] %>;
 
+location / {
+    index index.php index.html index.htm;
+    try_files $uri $uri/ /index.php?$args;
+}
+
 location ~ \.php {
     include fastcgi_params;
     fastcgi_param  SCRIPT_FILENAME    $document_root$fastcgi_script_name;
