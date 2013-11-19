@@ -7,8 +7,23 @@ location / {
 }
 
 location ~ \.php {
+    fastcgi_index index.php;
     include fastcgi_params;
     fastcgi_param  SCRIPT_FILENAME    $document_root$fastcgi_script_name;
+    fastcgi_param PATH_INFO $fastcgi_script_name;
     fastcgi_pass php;
     fastcgi_buffers 256 4k;
+}
+
+# Remove the "www" in front of your URL
+if ($host ~* ^www\.(.*))
+{
+    set $host_without_www $1;
+    rewrite ^/(.*)$ $scheme://$host_without_www/$1 permanent;
+}
+ 
+# Unless the request is for a valid file, send to bootstrap
+if (!-e $request_filename)
+{
+    rewrite ^(.+)$ /index.php?q=$1 last;
 }
